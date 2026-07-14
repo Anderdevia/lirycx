@@ -1,0 +1,262 @@
+-- =============================================
+-- TABLA: MODULO
+-- =============================================
+
+CREATE TABLE modulo
+(
+    id_modulo INTEGER GENERATED ALWAYS AS IDENTITY,
+    nombre VARCHAR(100) NOT NULL,
+    icono VARCHAR(100),
+    orden INTEGER NOT NULL DEFAULT 0,
+    ruta VARCHAR(200),
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT pk_modulo
+        PRIMARY KEY (id_modulo)
+);
+
+
+-- =============================================
+-- TABLA: SUBMODULO
+-- =============================================
+
+CREATE TABLE submodulo
+(
+    id_submodulo INTEGER GENERATED ALWAYS AS IDENTITY,
+    id_modulo INTEGER NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    icono VARCHAR(100),
+    orden INTEGER NOT NULL DEFAULT 0,
+    ruta VARCHAR(200) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT pk_submodulo
+        PRIMARY KEY (id_submodulo),
+
+    CONSTRAINT fk_submodulo_modulo
+        FOREIGN KEY (id_modulo)
+        REFERENCES modulo(id_modulo)
+);
+
+
+-- =============================================
+-- INSERTAR MÓDULOS
+-- =============================================
+
+INSERT INTO modulo
+(
+    nombre,
+    icono,
+    orden,
+    ruta,
+    activo
+)
+VALUES
+(
+    'Inglés',
+    '🎵',
+    1,
+    NULL,
+    TRUE
+);
+
+
+INSERT INTO modulo
+(
+    nombre,
+    icono,
+    orden,
+    ruta,
+    activo
+)
+VALUES
+(
+    'Karaoke',
+    '🎤',
+    2,
+    NULL,
+    TRUE
+);
+
+
+-- =============================================
+-- INSERTAR SUBMÓDULOS DE INGLÉS
+-- =============================================
+
+INSERT INTO submodulo
+(
+    id_modulo,
+    nombre,
+    icono,
+    orden,
+    ruta,
+    activo
+)
+SELECT
+    id_modulo,
+    'Level 1',
+    '📘',
+    1,
+    '/ingles/level1',
+    TRUE
+FROM modulo
+WHERE nombre = 'Inglés';
+
+
+INSERT INTO submodulo
+(
+    id_modulo,
+    nombre,
+    icono,
+    orden,
+    ruta,
+    activo
+)
+SELECT
+    id_modulo,
+    'Level 2',
+    '📗',
+    2,
+    '/ingles/level2',
+    TRUE
+FROM modulo
+WHERE nombre = 'Inglés';
+
+
+INSERT INTO submodulo
+(
+    id_modulo,
+    nombre,
+    icono,
+    orden,
+    ruta,
+    activo
+)
+SELECT
+    id_modulo,
+    'Level 3',
+    '📕',
+    3,
+    '/ingles/level3',
+    TRUE
+FROM modulo
+WHERE nombre = 'Inglés';
+
+
+-- =============================================
+-- INSERTAR SUBMÓDULOS DE KARAOKE
+-- =============================================
+
+INSERT INTO submodulo
+(
+    id_modulo,
+    nombre,
+    icono,
+    orden,
+    ruta,
+    activo
+)
+SELECT
+    id_modulo,
+    'Pop',
+    '🎶',
+    1,
+    '/karaoke/pop',
+    TRUE
+FROM modulo
+WHERE nombre = 'Karaoke';
+
+
+INSERT INTO submodulo
+(
+    id_modulo,
+    nombre,
+    icono,
+    orden,
+    ruta,
+    activo
+)
+SELECT
+    id_modulo,
+    'Rock',
+    '🎸',
+    2,
+    '/karaoke/rock',
+    TRUE
+FROM modulo
+WHERE nombre = 'Karaoke';
+
+
+-- =============================================
+-- CONSULTAR RESULTADO
+-- =============================================
+
+SELECT
+    m.id_modulo,
+    m.nombre AS modulo,
+    m.icono AS icono_modulo,
+    sm.id_submodulo,
+    sm.nombre AS submodulo,
+    sm.icono AS icono_submodulo,
+    sm.ruta,
+    sm.orden
+FROM modulo m
+LEFT JOIN submodulo sm
+    ON sm.id_modulo = m.id_modulo
+WHERE m.activo = TRUE
+AND (sm.activo = TRUE OR sm.id_submodulo IS NULL)
+ORDER BY
+    m.orden,
+    sm.orden;
+
+
+CREATE TABLE cancion
+(
+    id_cancion INTEGER GENERATED ALWAYS AS IDENTITY,
+
+    id_submodulo INTEGER NOT NULL,
+
+    titulo VARCHAR(200) NOT NULL,
+
+    artista VARCHAR(200),
+
+    archivo_audio VARCHAR(500) NOT NULL,
+
+    archivo_lrc VARCHAR(500),
+
+    imagen VARCHAR(500),
+
+    orden INTEGER NOT NULL DEFAULT 0,
+
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT pk_cancion
+        PRIMARY KEY (id_cancion),
+
+    CONSTRAINT fk_cancion_submodulo
+        FOREIGN KEY (id_submodulo)
+        REFERENCES submodulo(id_submodulo)
+);
+
+INSERT INTO cancion
+(
+    id_submodulo,
+    titulo,
+    artista,
+    archivo_audio,
+    archivo_lrc,
+    orden,
+    activo
+)
+SELECT
+    id_submodulo,
+    'Fine',
+    'Artista',
+    'Level1/fine.mp3',
+    'Level1/fine.lrc',
+    1,
+    TRUE
+FROM submodulo
+WHERE nombre = 'Level 1';
+
+select * from cancion
