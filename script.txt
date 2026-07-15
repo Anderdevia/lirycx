@@ -210,7 +210,7 @@ ORDER BY
     sm.orden;
 
 
-CREATE TABLE cancion
+create TABLE cancion
 (
     id_cancion INTEGER GENERATED ALWAYS AS IDENTITY,
 
@@ -224,7 +224,16 @@ CREATE TABLE cancion
 
     archivo_lrc VARCHAR(500),
 
+    imagenpr VARCHAR(500),
     imagen VARCHAR(500),
+
+    duracion_segundos INTEGER NOT NULL DEFAULT 0,
+
+    favorita BOOLEAN NOT NULL DEFAULT FALSE,
+
+    cantidad_reproducciones INTEGER NOT NULL DEFAULT 0,
+
+    nivel SMALLINT NOT NULL DEFAULT 1,
 
     orden INTEGER NOT NULL DEFAULT 0,
 
@@ -237,6 +246,42 @@ CREATE TABLE cancion
         FOREIGN KEY (id_submodulo)
         REFERENCES submodulo(id_submodulo)
 );
+
+
+
+INSERT INTO  cancion
+(
+    id_submodulo,
+    titulo,
+    artista,
+    archivo_audio,
+    archivo_lrc,
+    imagen,
+    imagenpr,
+    duracion_segundos,
+    favorita,
+    cantidad_reproducciones,
+    nivel,
+    orden,
+    activo
+)
+VALUES
+(
+    1,
+    'Fine',
+    'Kacey Musgraves',
+     'Level1/fine.mp3',
+    'Level1/fine.lrc',
+    null,
+    'Level1/fine.jpg',
+    225,
+    FALSE,
+    0,
+    1,
+    1,
+    TRUE
+);
+
 
 INSERT INTO cancion
 (
